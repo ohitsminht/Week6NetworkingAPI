@@ -1,7 +1,7 @@
 package edu.du.week6networkingapi
 
+import edu.du.week6networkingapi.model.CarJSONModel
 import okhttp3.RequestBody
-import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -10,7 +10,7 @@ interface CarService {
     suspend fun createCar(@Body requestBody: RequestBody): Response<CarJSONModel>
 
     @GET("cars")
-    suspend fun getCars(): Response<CarJSONModel>
+    suspend fun getCars(): Response<List<CarJSONModel>>
 
     @GET("cars/{id}")
     suspend fun getCars(@Path("id") id: String): Response<CarJSONModel>

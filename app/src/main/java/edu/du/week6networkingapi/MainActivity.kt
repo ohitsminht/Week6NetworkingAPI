@@ -7,14 +7,13 @@ import android.widget.Button
 import android.widget.TextView
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
+import edu.du.week6networkingapi.model.CarJSONModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -42,21 +41,14 @@ class MainActivity : AppCompatActivity() {
         responseText = findViewById(R.id.response_text)
 
         findViewById<Button>(R.id.get_button).setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                val response = service.getCars()
-                withContext(Dispatchers.Main) {
-                    if (response.isSuccessful) {
-                        val prettyJson = gson.toJson(response.body())
-                        responseText.text = prettyJson
-                    } else {
-                        responseText.text = response.code().toString()
-                    }
+            if (TextUtils.isEmpty(requestText.text)) {
+                makeListCall {
+                    service.getCars()
                 }
-//                if (TextUtils.isEmpty(requestText.text)) {
-//                    service.getCars()
-//                } else {
-//                    service.getCars(requestText.text.toString())
-//                }
+            } else {
+                makeObjectCall {
+                    service.getCars(requestText.text.toString())
+                }
             }
         }
 
@@ -65,8 +57,10 @@ class MainActivity : AppCompatActivity() {
             carObject.put("id", "3")
             carObject.put("make", "Subaru")
             carObject.put("model", "WRX")
-            makeCall {
-                service.createCar(carObject.toString().toRequestBody("application/json".toMediaTypeOrNull()))
+            makeObjectCall {
+                service.createCar(
+                    carObject.toString().toRequestBody("application/json".toMediaTypeOrNull())
+                )
             }
         }
 
@@ -74,24 +68,27 @@ class MainActivity : AppCompatActivity() {
             val jsonObject = JSONObject()
             jsonObject.put("id", "2")
             jsonObject.put("model", "GR Supra")
-            makeCall {
-                service.updateCar(jsonObject.getString("id"), jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull()))
+            makeObjectCall {
+                service.updateCar(
+                    jsonObject.getString("id"),
+                    jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull())
+                )
             }
         }
 
         findViewById<Button>(R.id.delete_button).setOnClickListener {
-            makeCall {
+            makeObjectCall {
                 service.deleteCar(requestText.text.toString())
             }
         }
     }
 
-    fun makeCall(action: suspend () -> Response<CarJSONModel>) {
+    fun makeListCall(action: suspend () -> Response<List<CarJSONModel>>) {
         CoroutineScope(Dispatchers.IO).launch {
-            var response: Response<CarJSONModel> = action()
+            var response: Response<List<CarJSONModel>> = action()
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
-                    responseText.text = formatJson(response.body()?.toString())
+                    responseText.text = gson.toJson(response.body())
                 } else {
                     responseText.text = response.code().toString()
                 }
@@ -99,7 +96,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun formatJson(text: String?): String {
-        return gson.toJson(text)
+    fun makeObjectCall(action: suspend () -> Response<CarJSONModel>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            var response: Response<CarJSONModel> = action()
+            withContext(Dispatchers.Main) {
+                if (response.isSuccessful) {
+                    responseText.text = gson.toJson(response.body())
+                } else {
+                    responseText.text = response.code().toString()
+                }
+            }
+        }
     }
 }
