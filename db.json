@@ -1,0 +1,62 @@
+{
+	"cars":	
+	[	
+		{
+			"id": 1,
+			"make": "Lexus",
+			"model": "GS350",
+			"trim": "F-Sport",
+			"year": 2013,
+			"transmission": {
+				"gears": 6,
+				"drivetrain": "RWD"
+			},
+			"wheels": {
+				"name": "Garson Ryugi",
+				"type": "aftermarket",
+				"configuration": [
+					{
+						"placement": "front",
+						"diameter": 19,
+						"width": 10,
+						"offset": {
+							"center-deviation": "positive",
+							"amount": 11
+						}
+					},
+					{
+						"placement": "rear",
+						"diameter": 19,
+						"width": 10.5,
+						"offset": {
+							"center-deviation": "positive",
+							"amount": 17
+						}
+					}
+				]
+			},
+			"tires": {
+				"brand": "Advanta",
+				"size": ["235/35R19", "245/35R19"]
+			}
+		},
+		{
+			"id": 2,
+			"make": "Toyota",
+			"model": "GR Corolla",
+			"trim": "Morizo",
+			"year": 2023,
+			"transmission": {
+				"gears": 6,
+				"drivetrain": "AWD"
+			},
+			"wheels": {
+				"type": "stock"
+			},
+			"tires": {
+				"brand": "Michelin",
+				"size": ["245/40R18", "245/40R18"]
+			}
+		}
+	]
+}
