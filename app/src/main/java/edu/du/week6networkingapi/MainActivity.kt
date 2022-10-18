@@ -18,6 +18,7 @@ import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Response
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
     lateinit var service: CarService
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         val retrofit = Retrofit.Builder()
             .baseUrl("https://my-json-server.typicode.com/ohitsminht/Week6NetworkingAPI/")
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
 
         service = retrofit.create(CarService::class.java)
@@ -40,12 +42,21 @@ class MainActivity : AppCompatActivity() {
         responseText = findViewById(R.id.response_text)
 
         findViewById<Button>(R.id.get_button).setOnClickListener {
-            makeCall {
-                if (TextUtils.isEmpty(requestText.text)) {
-                    service.getCars()
-                } else {
-                    service.getCars(requestText.text.toString())
+            CoroutineScope(Dispatchers.IO).launch {
+                val response = service.getCars()
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        val prettyJson = gson.toJson(response.body())
+                        responseText.text = prettyJson
+                    } else {
+                        responseText.text = response.code().toString()
+                    }
                 }
+//                if (TextUtils.isEmpty(requestText.text)) {
+//                    service.getCars()
+//                } else {
+//                    service.getCars(requestText.text.toString())
+//                }
             }
         }
 
@@ -75,12 +86,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun makeCall(action: suspend () -> Response<ResponseBody>) {
+    fun makeCall(action: suspend () -> Response<CarJSONModel>) {
         CoroutineScope(Dispatchers.IO).launch {
-            var response: Response<ResponseBody> = action()
+            var response: Response<CarJSONModel> = action()
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
-                    responseText.text = formatJson(response.body()?.string())
+                    responseText.text = formatJson(response.body()?.toString())
                 } else {
                     responseText.text = response.code().toString()
                 }
@@ -89,6 +100,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun formatJson(text: String?): String {
-        return gson.toJson(JsonParser.parseString(text))
+        return gson.toJson(text)
     }
 }

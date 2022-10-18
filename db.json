@@ -1,6 +1,5 @@
 {
-	"cars":	
-	[	
+	"cars": [
 		{
 			"id": 1,
 			"make": "Lexus",
@@ -12,28 +11,7 @@
 				"drivetrain": "RWD"
 			},
 			"wheels": {
-				"name": "Garson Ryugi",
-				"type": "aftermarket",
-				"configuration": [
-					{
-						"placement": "front",
-						"diameter": 19,
-						"width": 10,
-						"offset": {
-							"center-deviation": "positive",
-							"amount": 11
-						}
-					},
-					{
-						"placement": "rear",
-						"diameter": 19,
-						"width": 10.5,
-						"offset": {
-							"center-deviation": "positive",
-							"amount": 17
-						}
-					}
-				]
+				"oem": false
 			},
 			"tires": {
 				"brand": "Advanta",
@@ -51,7 +29,7 @@
 				"drivetrain": "AWD"
 			},
 			"wheels": {
-				"type": "stock"
+				"oem": true
 			},
 			"tires": {
 				"brand": "Michelin",
